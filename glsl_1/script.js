@@ -10,19 +10,19 @@ window.addEventListener('DOMContentLoaded', () => {
   webgl.init('webgl-canvas');
 
   webgl.load()
-  .then(() => {
-    webgl.setup();
-    webgl.render();
-  });
+    .then(() => {
+      webgl.setup();
+      webgl.render();
+    });
 }, false);
 
 class WebGLFrame {
   constructor() {
-    this.canvas    = null;  // canvas エレメント
-    this.gl        = null;  // WebGL コンテキスト
-    this.running   = false; // 実行中かどうかを表すフラグ
+    this.canvas = null;  // canvas エレメント
+    this.gl = null;  // WebGL コンテキスト
+    this.running = false; // 実行中かどうかを表すフラグ
     this.beginTime = 0;     // 実行開始時のタイムスタンプ
-    this.nowTime   = 0;     // 実行開始からの経過時間（秒）
+    this.nowTime = 0;     // 実行開始からの経過時間（秒）
     // self binding
     this.render = this.render.bind(this);
   }
@@ -39,9 +39,9 @@ class WebGLFrame {
         this.canvas = c;
       }
     }
-    if (this.canvas == null) {throw new Error('invalid argument');}
+    if (this.canvas == null) { throw new Error('invalid argument'); }
     this.gl = this.canvas.getContext('webgl');
-    if (this.gl == null) {throw new Error('webgl not supported');}
+    if (this.gl == null) { throw new Error('webgl not supported'); }
   }
   /**
    * シェーダやテクスチャ用の画像など非同期で読み込みする処理を行う。
@@ -49,48 +49,48 @@ class WebGLFrame {
    */
   load() {
     // ロード完了後に必要となるプロパティを初期化
-    this.program     = null; // プログラムオブジェクト
+    this.program = null; // プログラムオブジェクト
     this.attLocation = null; // attribute location
-    this.attStride   = null; // attribute のストライド（float 何個分に相当するか）
+    this.attStride = null; // attribute のストライド（float 何個分に相当するか）
     this.uniLocation = null; // uniform location
-    this.uniType     = null; // uniform のタイプ
+    this.uniType = null; // uniform のタイプ
 
     return new Promise((resolve) => {
       this.loadShader([
         './vs1.vert',
         './fs1.frag',
       ])
-      .then((shaders) => {
-        const gl = this.gl;
-        const vs = this.createShader(shaders[0], gl.VERTEX_SHADER);
-        const fs = this.createShader(shaders[1], gl.FRAGMENT_SHADER);
-        this.program = this.createProgram(vs, fs);
-        // attribute 変数関係
-        this.attLocation = [
-          gl.getAttribLocation(this.program, 'position'),
-          gl.getAttribLocation(this.program, 'color'),
-          gl.getAttribLocation(this.program, 'size'),
-        ];
-        this.attStride = [
-          3,
-          4,
-          1,
-        ];
-        // uniform 変数関係
-        this.uniLocation = [
-          gl.getUniformLocation(this.program, 'globalColor'),
-          gl.getUniformLocation(this.program, 'mouse'),
-          gl.getUniformLocation(this.program, 'resolution'),
-        ];
-        this.uniType = [
-          'uniform4fv',
-          'uniform2fv',
-          'uniform2fv',
-        ];
+        .then((shaders) => {
+          const gl = this.gl;
+          const vs = this.createShader(shaders[0], gl.VERTEX_SHADER);
+          const fs = this.createShader(shaders[1], gl.FRAGMENT_SHADER);
+          this.program = this.createProgram(vs, fs);
+          // attribute 変数関係
+          this.attLocation = [
+            gl.getAttribLocation(this.program, 'position'),
+            gl.getAttribLocation(this.program, 'color'),
+            gl.getAttribLocation(this.program, 'size'),
+          ];
+          this.attStride = [
+            3,
+            4,
+            1,
+          ];
+          // uniform 変数関係
+          this.uniLocation = [
+            gl.getUniformLocation(this.program, 'globalColor'),
+            gl.getUniformLocation(this.program, 'mouse'),
+            gl.getUniformLocation(this.program, 'resolution'),
+          ];
+          this.uniType = [
+            'uniform4fv',
+            'uniform2fv',
+            'uniform2fv',
+          ];
 
-        // ここまで問題なく完了したら Promise を解決する
-        resolve();
-      });
+          // ここまで問題なく完了したら Promise を解決する
+          resolve();
+        });
     });
   }
   /**
@@ -105,7 +105,7 @@ class WebGLFrame {
     window.addEventListener('mousemove', (evt) => {
       let x = evt.clientX;
       let y = evt.clientY;
-      const width  = window.innerWidth;
+      const width = window.innerWidth;
       const height = window.innerHeight;
       x = (x - width / 2.0) / (width / 2.0);
       y = (y - height / 2.0) / (height / 2.0);
@@ -199,7 +199,7 @@ class WebGLFrame {
       throw new Error('invalid argument');
     }
     const promises = pathArray.map((path) => {
-      return fetch(path).then((response) => {return response.text();})
+      return fetch(path).then((response) => { return response.text(); })
     });
     return Promise.all(promises);
   }
@@ -365,7 +365,7 @@ class WebGLFrame {
     gl.bindTexture(gl.TEXTURE_2D, null);
     gl.bindRenderbuffer(gl.RENDERBUFFER, null);
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    return {framebuffer: frameBuffer, renderbuffer: depthRenderBuffer, texture: fTexture};
+    return { framebuffer: frameBuffer, renderbuffer: depthRenderBuffer, texture: fTexture };
   }
 
   /**
@@ -398,7 +398,7 @@ class WebGLFrame {
     gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, fTexture, 0);
     gl.bindTexture(gl.TEXTURE_2D, null);
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    return {framebuffer: frameBuffer, texture: fTexture};
+    return { framebuffer: frameBuffer, texture: fTexture };
   }
 
   /**
@@ -458,7 +458,7 @@ class WebGLFrame {
     const gl = this.gl;
     return {
       elementIndexUint: gl.getExtension('OES_element_index_uint'),
-      textureFloat:   gl.getExtension('OES_texture_float'),
+      textureFloat: gl.getExtension('OES_texture_float'),
       textureHalfFloat: gl.getExtension('OES_texture_half_float')
     };
   }
