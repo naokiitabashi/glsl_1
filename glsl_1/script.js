@@ -115,7 +115,7 @@ class WebGLFrame {
 
     const r1 = 0.9;
     const r2 = 0.1;
-    const VERTEX_COUNT = 100; // 一辺あたりの頂点の個数（正確にはブロック数）
+    const VERTEX_COUNT = 170; // 一辺あたりの頂点の個数（正確にはブロック数）
     const VERTEX_SIZE = 1.0; // 頂点の既定のサイズ
     /**
      * XY 平面の -1.0 ～ 1.0 の範囲に、頂点を敷き詰めます。
