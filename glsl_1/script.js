@@ -1,10 +1,3 @@
-
-/** ===========================================================================
- * このサンプルは、GLSL のその他のルールや仕様を解説するためのサンプルです。
- * 頂点シェーダのファイル（vs1.vert）に解説コメントが大量に記述されていますので
- * 確認しておきましょう。
- * ========================================================================= */
-
 window.addEventListener('DOMContentLoaded', () => {
   const webgl = new WebGLFrame();
   webgl.init('webgl-canvas');
@@ -81,11 +74,13 @@ class WebGLFrame {
             gl.getUniformLocation(this.program, 'globalColor'),
             gl.getUniformLocation(this.program, 'mouse'),
             gl.getUniformLocation(this.program, 'resolution'),
+            gl.getUniformLocation(this.program, 'nowTime'),
           ];
           this.uniType = [
             'uniform4fv',
             'uniform2fv',
             'uniform2fv',
+            'uniform1fv',
           ];
 
           // ここまで問題なく完了したら Promise を解決する
@@ -117,8 +112,11 @@ class WebGLFrame {
     this.position = [];
     this.color = [];
     this.size = [];
-    const VERTEX_COUNT = 10; // 一辺あたりの頂点の個数（正確にはブロック数）
-    const VERTEX_SIZE = 8.0; // 頂点の既定のサイズ
+
+    const r1 = 0.9;
+    const r2 = 0.1;
+    const VERTEX_COUNT = 100; // 一辺あたりの頂点の個数（正確にはブロック数）
+    const VERTEX_SIZE = 1.0; // 頂点の既定のサイズ
     /**
      * XY 平面の -1.0 ～ 1.0 の範囲に、頂点を敷き詰めます。
      * これを実現するために、変数 i と変数 j を利用した多重ループ構造を作り、
@@ -127,14 +125,17 @@ class WebGLFrame {
      */
     for (let i = 0; i <= VERTEX_COUNT; ++i) {
       // X 座標
-      const x = (i / VERTEX_COUNT) * 2.0 - 1.0;
+      const x = (i / VERTEX_COUNT) - 1.0;
       for (let j = 0; j <= VERTEX_COUNT; ++j) {
         // Y 座標
         const y = (j / VERTEX_COUNT) * 2.0 - 1.0;
-        this.position.push(x, y, 0.0);
-        // カウンタの値から色を求める
-        this.color.push(i / VERTEX_COUNT, j / VERTEX_COUNT, 0.5, 1.0);
-        this.size.push(VERTEX_SIZE);
+        const d = Math.hypot(x, y);
+        if (r2 < d && d < r1) {
+          this.position.push(x, y, 0.0);
+          // カウンタの値から色を求める
+          this.color.push(0.1, 0.1, 0.1, 1.0);
+          this.size.push(VERTEX_SIZE);
+        }
       }
     }
 
@@ -145,7 +146,7 @@ class WebGLFrame {
       this.createVbo(this.size),
     ];
     // 背景を何色でクリアするかを 0.0 ～ 1.0 の RGBA で指定する
-    gl.clearColor(0.1, 0.1, 0.1, 1.0);
+    gl.clearColor(1.0, 1.0, 1.0, 1.0);
     // このサンプルでは常時描画し続ける恒常ループを行うので true を指定
     this.running = true;
     // セットアップ完了時刻のタイムスタンプを取得しておく
@@ -181,6 +182,7 @@ class WebGLFrame {
       [1.0, 1.0, 1.0, 1.0],
       [this.mouseX, this.mouseY],
       [window.innerWidth, window.innerHeight],
+      [this.nowTime],
     ], this.uniLocation, this.uniType);
 
     // 転送済みの情報を使って、頂点を画面にレンダリングする
